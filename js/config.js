@@ -7,4 +7,4 @@ export const SUPABASE_URL = 'https://zjgdewjlmhrohmnoumap.supabase.co';
 export const SUPABASE_KEY = 'sb_publishable_eUUTLpklDiChI4vbcXgU7w_2wdxdaTM';   // öffentlicher "Publishable key"
 
 // Link auf das Impressum des Marktes (Pflicht für eine öffentliche Seite eines Unternehmens)
-export const IMPRESSUM_URL = '';
+export const IMPRESSUM_URL = 'impressum.html';
