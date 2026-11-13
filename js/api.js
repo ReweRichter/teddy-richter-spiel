@@ -7,7 +7,9 @@ export const online = Boolean(SUPABASE_URL && SUPABASE_KEY);
 async function rpc(fn, args) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
     method: 'POST',
-    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+    // Neue Schlüssel (sb_publishable_…) nur als apikey senden, alte anon-Schlüssel (JWT) zusätzlich als Bearer
+    headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json',
+      ...(SUPABASE_KEY.startsWith('eyJ') ? { Authorization: `Bearer ${SUPABASE_KEY}` } : {}) },
     body: JSON.stringify(args),
   });
   const text = await res.text();
