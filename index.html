@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#cc071e">
+<title>Teddy Richter kauft ein</title>
+<meta name="description" content="Das Einkaufsspiel vom REWE Richter: Hilf Teddy, den Einkaufszettel abzuarbeiten – und ab zur Kasse!">
+<meta property="og:title" content="Teddy Richter kauft ein">
+<meta property="og:description" content="Das Einkaufsspiel vom REWE Richter. Wer ist diese Woche am schnellsten?">
+<meta property="og:image" content="img/teddy-daumen.png">
+<link rel="icon" href="img/icons/baecker.png">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{ "imports": { "three": "./js/vendor/three.module.min.js" } }
+</script>
+</head>
+<body>
+<div id="game"></div>
+
+<!-- HUD im Spiel -->
+<div id="hud" class="hidden">
+  <div id="timer">00:00.0</div>
+  <button id="btn-pause" class="hud-btn" aria-label="Pause">II</button>
+  <button id="btn-mute" class="hud-btn" aria-label="Ton an/aus">🔊</button>
+  <div id="list-panel"></div>
+  <div id="banner" class="hidden"></div>
+  <div id="prompt" class="hidden"></div>
+</div>
+
+<!-- Touch-Steuerung -->
+<div id="touch" class="hidden">
+  <div id="stick"><div id="stick-knob"></div></div>
+  <button id="btn-throw"><img id="throw-icon" alt=""><span>Einwerfen</span></button>
+</div>
+
+<!-- Bildschirme -->
+<div id="screen-loading" class="screen center">
+  <div class="card small"><img src="img/logo.png" class="logo" alt="REWE Richter"><p id="loading-text">Markt wird aufgebaut …</p></div>
+</div>
+
+<div id="screen-menu" class="screen hidden">
+  <div class="menu-wrap">
+    <div class="card menu-card">
+      <img src="img/logo.png" class="logo" alt="REWE Richter">
+      <div class="red-rule"></div>
+      <h1>Teddy Richter</h1>
+      <h2>kauft ein</h2>
+      <p class="sub">Schnapp dir alles vom Zettel – und ab zur Kasse!</p>
+      <button class="btn red" data-go="setup">Spielen</button>
+      <button class="btn white" data-go="scores">Bestenliste der Woche</button>
+      <p class="hint desktop-only">WASD / Pfeiltasten fahren · Leertaste einwerfen · M Ton · Esc Pause</p>
+      <p class="hint touch-only">Links lenken · rechts einwerfen</p>
+      <p class="legal"><span id="impressum-wrap"><a id="link-impressum" target="_blank" rel="noopener">Impressum</a> · </span><a href="datenschutz.html" target="_blank">Datenschutz</a></p>
+    </div>
+    <figure class="teddy-fig menu-teddy">
+      <img src="img/teddy-daumen.png" alt="Teddy Richter zeigt Daumen hoch">
+      <figcaption class="ki">Teddy-Bild: KI-generiert</figcaption>
+    </figure>
+  </div>
+</div>
+
+<div id="screen-setup" class="screen hidden center">
+  <div class="card setup-card">
+    <div class="setup-top">
+      <figure class="teddy-fig setup-teddy">
+        <img src="img/teddy-zeigt.png" alt="Teddy Richter">
+        <figcaption class="ki">Teddy-Bild: KI-generiert</figcaption>
+      </figure>
+      <div>
+        <p class="muted">Deine Spielfigur</p>
+        <h1>Teddy Richter</h1>
+        <p>Das Maskottchen vom REWE Richter schnappt sich heute selbst den Wagen.</p>
+        <p>Hilf Teddy, den Einkaufszettel abzuarbeiten – und zwar flott!</p>
+      </div>
+    </div>
+    <p class="muted center-text">Schwierigkeit</p>
+    <div id="diff-buttons" class="row"></div>
+    <div class="row">
+      <button class="btn grey small-btn" data-go="menu">Zurück</button>
+      <button class="btn red" id="btn-go">Los geht's!</button>
+    </div>
+    <p id="setup-error" class="error hidden"></p>
+  </div>
+</div>
+
+<div id="screen-list" class="screen hidden center dim">
+  <div class="list-layout">
+    <div id="list-big"></div>
+    <div class="list-info">
+      <h1>Dein Einkaufszettel</h1>
+      <p>Sammle alle Artikel ein und fahre dann so schnell wie möglich durch eine Kasse.</p>
+      <p>Jeder fehlende, falsche oder doppelte Artikel kostet 10 Strafsekunden.</p>
+      <p>Achte auf Durchsagen – Angebote bringen 5 Sekunden Bonus!</p>
+      <button class="btn red" id="btn-start">Start!</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-countdown" class="screen hidden center nopointer"><div id="count"></div></div>
+
+<div id="screen-pause" class="screen hidden center dim">
+  <div class="card small">
+    <h1>Pause</h1>
+    <button class="btn red" id="btn-resume">Weiter</button>
+    <button class="btn grey" id="btn-quit">Zum Hauptmenü</button>
+  </div>
+</div>
+
+<div id="screen-receipt" class="screen hidden dim">
+  <div class="receipt-layout">
+    <div id="receipt"></div>
+    <div class="receipt-side">
+      <h1>Geschafft!</h1>
+      <p id="final-time" class="final"></p>
+      <p id="check-state" class="muted-light"></p>
+      <div id="name-box" class="hidden">
+        <label for="name-input">Dein Name für die Bestenliste:</label>
+        <input id="name-input" maxlength="14" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Spitzname">
+        <p id="name-error" class="error hidden"></p>
+        <button class="btn red" id="btn-save">Eintragen</button>
+      </div>
+      <button class="btn grey" id="btn-skip">Ohne Eintrag weiter</button>
+      <figure class="teddy-fig receipt-teddy">
+        <img src="img/teddy-daumen.png" alt="">
+        <figcaption class="ki">Teddy-Bild: KI-generiert</figcaption>
+      </figure>
+    </div>
+  </div>
+</div>
+
+<div id="screen-scores" class="screen hidden center dim">
+  <div class="card scores-card">
+    <div class="scores-head">Bestenliste der Woche</div>
+    <div id="score-tabs" class="row"></div>
+    <div id="score-table"></div>
+    <p id="week-info" class="muted center-text"></p>
+    <div class="row">
+      <button class="btn grey" data-go="menu">Hauptmenü</button>
+      <button class="btn red" id="btn-again">Nochmal spielen</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
