@@ -1,6 +1,6 @@
 // Spielfigur Teddy mit Wagen, andere Kunden und der Mitarbeiter mit Hubwagen (wie game/actors.py).
 import * as THREE from 'three';
-import { meshFromOps } from './meshops.js';
+import { meshFromOps } from '../../shared/js/meshops.js';
 
 // ---------- Rechtecke (evtl. gedreht) und Kollision ----------
 export function boxAxes(b) {

@@ -1,0 +1,32 @@
+/* Gemeinsame Gestaltung der REWE Richter Spielwelt (Hub, Spiel 1, Frische-Chef). REWE-Rot / Weiß / Anthrazit. */
+:root {
+  --sw-red: #cc071e;
+  --sw-red-dark: #a30418;
+  --sw-anthrazit: #2b2b2e;
+  --sw-paper: #ffffff;
+  --sw-bg: #f2f0eb;
+  --sw-grey: #6e6e73;
+  --sw-line: #dedbd3;
+  --sw-gold: #f5b400;
+  --sw-green: #3c9a3c;
+  --sw-blue: #2f7fd1;
+}
+
+/* Kleiner, gut erreichbarer Rückweg zur Spielwahl */
+.sw-back {
+  position: fixed; z-index: 40; left: max(10px, env(safe-area-inset-left)); top: max(10px, env(safe-area-inset-top));
+  display: inline-flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 14px;
+  background: rgba(255, 255, 255, .92); color: var(--sw-anthrazit); border-radius: 20px;
+  font: 600 .9rem/1 "Open Sans", "Segoe UI", Arial, sans-serif; text-decoration: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
+}
+.sw-back:active { transform: scale(.96); }
+a.sw-btn { text-decoration: none; text-align: center; color: inherit; }
+
+/* Sterne */
+.sw-stars { display: inline-flex; gap: 3px; }
+.sw-star { width: 22px; height: 22px; display: inline-block; }
+.sw-star path { fill: #d9d5cc; }
+.sw-star.on path { fill: var(--sw-gold); }
+
+.sw-ki { font-size: .68rem; color: var(--sw-grey); }

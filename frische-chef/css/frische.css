@@ -1,0 +1,119 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #1f1f22; color: var(--sw-anthrazit);
+  font-family: "Open Sans", "Segoe UI", Arial, sans-serif; touch-action: none; user-select: none; -webkit-user-select: none;
+  -webkit-touch-callout: none; overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
+button { font-family: inherit; color: inherit; }
+.hidden { display: none !important; }
+
+/* 9:16-Rahmen: am Handy volle Fläche, am PC mittig */
+#app { position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100vw, 56.25dvh);
+  display: flex; flex-direction: column; background: var(--sw-bg); }
+@supports not (height: 1dvh) { #app { width: min(100vw, 56.25vh); } }
+
+/* Oben ~15 % */
+#top { flex: none; background: var(--sw-red); color: #fff; padding: max(6px, env(safe-area-inset-top)) 8px 6px; }
+#topline { display: flex; align-items: center; gap: 8px; height: 36px; }
+.mini { width: 36px; height: 36px; flex: none; border: none; border-radius: 12px; background: rgba(255,255,255,.18);
+  color: #fff; font-weight: 800; font-size: .95rem; cursor: pointer; }
+#score { display: flex; align-items: baseline; gap: 5px; font-weight: 800; font-size: 1.35rem; min-width: 0; }
+#score small { font-size: .7rem; font-weight: 600; opacity: .85; }
+#combo { font-weight: 800; background: #fff; color: var(--sw-red); border-radius: 10px; padding: 2px 8px; font-size: .95rem; transition: transform .15s; }
+#combo.off { opacity: .45; }
+#combo.pop { transform: scale(1.3); }
+#clock { margin-left: auto; font-weight: 800; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+#clock.ot { color: var(--sw-gold); animation: blink .6s infinite alternate; }
+@keyframes blink { to { opacity: .55; } }
+
+#orders { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; height: 74px; }
+.order { position: relative; background: #fff; color: var(--sw-anthrazit); border-radius: 12px; border: none; padding: 4px 3px 9px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;
+  animation: drop .25s ease-out; }
+@keyframes drop { from { transform: translateY(-20px); opacity: 0; } }
+.order img { width: 34px; height: 34px; }
+.order b { font-size: .62rem; line-height: 1.05; text-align: center; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.order .temp { position: absolute; top: 3px; right: 4px; font-size: .62rem; font-weight: 800; }
+.order .temp.k { color: var(--sw-blue); }
+.order .temp.r { color: var(--sw-green); }
+.order .bar { position: absolute; left: 0; bottom: 0; height: 6px; background: var(--sw-green); transition: background .3s; }
+.order.y .bar { background: var(--sw-gold); }
+.order.r .bar { background: #e2231a; }
+.order.r { animation: shake .4s infinite; }
+@keyframes shake { 25% { transform: translateX(-1.5px); } 75% { transform: translateX(1.5px); } }
+.order.target { outline: 3px solid var(--sw-gold); outline-offset: -3px; }
+.order.gone { animation: out .35s forwards; }
+@keyframes out { to { transform: scale(.6); opacity: 0; } }
+.order.empty { background: rgba(255,255,255,.12); animation: none; cursor: default; }
+
+/* Mitte ~70 % */
+#field { position: relative; flex: 1; min-height: 0; }
+#cv, #ov { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#ov { pointer-events: none; }
+.btn:disabled { opacity: .6; }
+#toast { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); background: rgba(28,28,30,.9); color: #fff;
+  padding: 8px 14px; border-radius: 14px; font-weight: 700; font-size: .9rem; text-align: center; width: max-content; max-width: 92%;
+  pointer-events: none; }
+#toast.bad { background: rgba(204,7,30,.95); }
+#toast.ot { background: var(--sw-gold); color: #222; font-size: 1.05rem; }
+
+/* Unten ~15 % */
+#bar { flex: none; display: flex; gap: 10px; padding: 10px 12px max(12px, env(safe-area-inset-bottom)); background: var(--sw-anthrazit); }
+#btn-switch { flex: 1; min-height: 74px; border: none; border-radius: 20px; background: #3c3c40; display: flex; align-items: center;
+  justify-content: space-around; padding: 6px; cursor: pointer; color: #fff; }
+#btn-switch:active, #btn-dash:active { transform: scale(.97); }
+.who { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px; border-radius: 14px;
+  font-weight: 700; font-size: .95rem; opacity: .55; transition: background .15s, opacity .15s; }
+.who.on { background: #fff; color: var(--sw-anthrazit); opacity: 1; }
+.who em { font-style: normal; font-size: .68rem; font-weight: 600; min-height: 1em; opacity: .8; }
+.who .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+.dot.teddy { background: #a8693a; box-shadow: inset 0 -4px 0 #222; }
+.dot.azubi { background: var(--sw-red); }
+.swap { font-size: 1.3rem; opacity: .6; padding: 0 2px; }
+#btn-dash { width: 92px; flex: none; border: none; border-radius: 20px; background: var(--sw-gold); position: relative; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: .85rem; color: #222; }
+#btn-dash svg { width: 38px; height: 38px; transform: rotate(-90deg); }
+#btn-dash circle { fill: none; stroke: #222; stroke-width: 4; stroke-dasharray: 107; stroke-dashoffset: 0; stroke-linecap: round; }
+#btn-dash.cool { background: #8a8a8f; }
+
+/* Bildschirme */
+.screen { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px;
+  overflow-y: auto; background: var(--sw-bg); }
+.screen.dim { background: rgba(0,0,0,.55); }
+.screen.clear { background: transparent; pointer-events: none; }
+.card { position: relative; z-index: 1; background: #fff; border-radius: 22px; padding: 20px 20px 16px; max-width: 400px; width: 100%;
+  box-shadow: 0 10px 40px rgba(0,0,0,.18); text-align: center; }
+.card.small { max-width: 320px; }
+.logo { width: 170px; display: block; margin: 0 auto 6px; }
+h1 { color: var(--sw-red); margin: .1em 0 0; font-size: 2rem; line-height: 1.1; }
+h2 { margin: 0 0 .4em; font-weight: 500; font-size: 1.2rem; }
+.how { text-align: left; padding-left: 1.3em; margin: 8px 0; font-size: .9rem; line-height: 1.35; }
+.how li { margin-bottom: 5px; }
+.how .k { color: var(--sw-blue); font-weight: 700; }
+.how .r { color: var(--sw-green); font-weight: 700; }
+.tip { font-size: .8rem; color: var(--sw-grey); margin: 4px 0 8px; }
+.best { font-size: .82rem; color: var(--sw-grey); margin: 4px 0 0; }
+.btn { display: block; width: 100%; max-width: 320px; margin: 8px auto; padding: 14px 18px; font-size: 1.1rem; font-weight: 700; border: none;
+  border-radius: 16px; cursor: pointer; }
+.btn.red { background: var(--sw-red); color: #fff; }
+.btn.grey { background: #e9e7e2; color: var(--sw-anthrazit); }
+.btn:active { transform: scale(.97); }
+.teddy-fig { position: fixed; right: 8px; bottom: 0; width: 120px; margin: 0; z-index: 0; pointer-events: none; }
+.teddy-fig img { width: 100%; display: block; }
+.teddy-fig figcaption { position: absolute; bottom: 4px; right: 0; background: rgba(255,255,255,.8); padding: 0 5px; border-radius: 6px; }
+@media (max-height: 760px) { .teddy-fig { display: none; } }
+#count { font-size: 7rem; font-weight: 900; color: var(--sw-red); text-shadow: 0 4px 0 #fff, 0 8px 30px rgba(0,0,0,.3); }
+.sw-stars.big { justify-content: center; margin: 6px 0; }
+.sw-stars.big .sw-star { width: 54px; height: 54px; }
+.sw-star.on { animation: starpop .45s both; }
+@keyframes starpop { from { transform: scale(0) rotate(-40deg); } 70% { transform: scale(1.25); } }
+.final { font-size: 1.5rem; font-weight: 800; margin: 4px 0; }
+.record { color: var(--sw-red); font-weight: 800; margin: 0 0 4px; }
+#end-stats { width: 100%; font-size: .88rem; margin: 6px 0 8px; border-collapse: collapse; }
+#end-stats td { padding: 3px 4px; border-bottom: 1px solid var(--sw-line); text-align: left; }
+#end-stats td + td { text-align: right; font-weight: 700; }
+
+/* Nur Teddy spielbar: Leiste zeigt Teddys Status statt Figurenwechsel */
+.solo #who-azubi, .solo .swap { display: none; }
+.solo #btn-switch { cursor: default; }
+.solo #btn-switch:active { transform: none; }
+.solo .who.on { flex-direction: row; justify-content: center; gap: 10px; font-size: 1.05rem; }
+.solo .who em { font-size: .8rem; }

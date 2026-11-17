@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#cc071e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Frische-Chef: Obst &amp; Gemüse</title>
+<meta name="description" content="Frische-Chef vom REWE Richter: Hol die Ware aus dem Lager, sortiere sie und räum sie richtig ein, bevor die Fächer leer sind.">
+<meta property="og:title" content="Frische-Chef: Obst & Gemüse">
+<meta property="og:image" content="../shared/img/teddy-daumen.png">
+<link rel="icon" href="../shared/img/icons/tomaten.png">
+<link rel="stylesheet" href="../shared/css/spielwelt.css">
+<link rel="stylesheet" href="css/frische.css">
+<script type="importmap">
+{ "imports": { "three": "../shared/js/vendor/three.module.min.js" } }
+</script>
+</head>
+<body>
+<div id="app">
+  <!-- Oben: Aufträge, Punkte, Combo, Zeit -->
+  <header id="top">
+    <div id="topline">
+      <button id="btn-menu" class="mini" aria-label="Pause und Menü">II</button>
+      <div id="score"><span id="pts">0</span><small>Punkte</small></div>
+      <div id="combo" class="off">×1</div>
+      <div id="clock">2:00</div>
+      <button id="btn-ton" class="mini" aria-label="Ton an/aus">🔊</button>
+    </div>
+    <div id="orders"></div>
+  </header>
+
+  <!-- Mitte: Spielfeld -->
+  <div id="field"><canvas id="cv"></canvas><canvas id="ov"></canvas><div id="toast" class="hidden"></div></div>
+
+  <!-- Unten: Daumenleiste -->
+  <footer id="bar">
+    <button id="btn-switch" aria-label="Figur wechseln (Teddy / Azubi)">
+      <span class="who" id="who-teddy"><i class="dot teddy"></i>Teddy<em id="hold-teddy"></em></span>
+      <span class="swap">⇄</span>
+      <span class="who" id="who-azubi"><i class="dot azubi"></i>Azubi<em id="hold-azubi"></em></span>
+    </button>
+    <button id="btn-dash" aria-label="Sprint"><svg viewBox="0 0 40 40"><circle id="dash-ring" cx="20" cy="20" r="17"/></svg><span>Sprint</span></button>
+  </footer>
+</div>
+
+<!-- Start -->
+<div id="s-start" class="screen">
+  <a class="sw-back" href="../">‹ Spielwelt</a>
+  <div class="card">
+    <img src="../shared/img/logo.png" class="logo" alt="REWE Richter">
+    <h1>Frische-Chef</h1>
+    <h2>Obst &amp; Gemüse</h2>
+    <ol class="how">
+      <li><b>Auftrag antippen</b> oder die <b>Palette</b> im Lager: Teddy holt die Kiste.</li>
+      <li>Ab zum <b>Sortiertisch</b>: Folie runter, Preisschild rein. Faule Ware kommt in die <b>Retoure</b> – die bringst du ins <b>Kühlhaus</b> (Tür zwischen Sushi und Obst).</li>
+      <li><b>Richtiges Fach</b> antippen: <span class="k">Kühlung</span> oder <span class="r">Raumtemperatur</span> – wie im Markt.</li>
+      <li><b>Leergut</b> zur Ballenpresse bringen, sonst steht es im Weg.</li>
+    </ol>
+    <p class="tip">Teddy erkennt faule Ware sofort und trägt bis zu 3 leere Kisten auf einmal. Gedrückt halten und ziehen = direkt steuern.</p>
+    <button class="btn red" id="btn-go" disabled>Markt wird aufgebaut …</button>
+    <p class="best" id="start-best"></p>
+  </div>
+  <figure class="teddy-fig"><img src="../shared/img/teddy-daumen.png" alt="Teddy Richter"><figcaption class="sw-ki">Teddy-Bild: KI-generiert</figcaption></figure>
+</div>
+
+<div id="s-count" class="screen clear hidden"><div id="count">3</div></div>
+
+<!-- Pause -->
+<div id="s-pause" class="screen dim hidden">
+  <div class="card small">
+    <h1>Pause</h1>
+    <button class="btn red" id="btn-resume">Weiter</button>
+    <button class="btn grey" id="btn-restart">Neu starten</button>
+    <button class="btn grey" id="btn-musik">Musik: an</button>
+    <a class="btn grey sw-btn" href="../">Zurück zur Spielwelt</a>
+  </div>
+</div>
+
+<!-- Ergebnis -->
+<div id="s-end" class="screen dim hidden">
+  <div class="card">
+    <h1 id="end-title">Feierabend!</h1>
+    <div id="end-stars" class="sw-stars big"></div>
+    <p id="end-points" class="final"></p>
+    <p id="end-record" class="record hidden">Neuer Rekord!</p>
+    <table id="end-stats"></table>
+    <button class="btn red" id="btn-again">Nochmal spielen</button>
+    <a class="btn grey sw-btn" href="../">Zurück zur Spielwelt</a>
+  </div>
+</div>
+
+<script type="module" src="js/spiel.js"></script>
+</body>
+</html>

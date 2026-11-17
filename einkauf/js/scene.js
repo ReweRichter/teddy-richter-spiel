@@ -1,6 +1,6 @@
 // Baut den Markt aus web/data/szene.json (exportiert aus dem Desktop-Spiel) auf.
 import * as THREE from 'three';
-import { chunkedMeshes, meshFromOps, vertexMaterial } from './meshops.js';
+import { chunkedMeshes, meshFromOps, vertexMaterial } from '../../shared/js/meshops.js';
 
 const loader = new THREE.TextureLoader();
 const texCache = new Map();

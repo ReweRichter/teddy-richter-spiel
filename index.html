@@ -4,145 +4,130 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#cc071e">
-<title>Teddy Richter kauft ein</title>
-<meta name="description" content="Das Einkaufsspiel vom REWE Richter: Hilf Teddy, den Einkaufszettel abzuarbeiten – und ab zur Kasse!">
-<meta property="og:title" content="Teddy Richter kauft ein">
-<meta property="og:description" content="Das Einkaufsspiel vom REWE Richter. Wer ist diese Woche am schnellsten?">
-<meta property="og:image" content="img/teddy-daumen.png">
-<link rel="icon" href="img/icons/baecker.png">
-<link rel="stylesheet" href="css/style.css">
-<script type="importmap">
-{ "imports": { "three": "./js/vendor/three.module.min.js" } }
-</script>
+<title>REWE Richter Spielwelt</title>
+<meta name="description" content="Die Spielwelt vom REWE Richter: Kauf mit Teddy ein oder werde Frische-Chef in der Obst- und Gemüseabteilung.">
+<meta property="og:title" content="REWE Richter Spielwelt">
+<meta property="og:description" content="Zwei Spiele mit Teddy Richter – direkt im Browser, auf dem Handy und am PC.">
+<meta property="og:image" content="shared/img/teddy-gamer.png">
+<link rel="icon" href="shared/img/icons/obst.png">
+<link rel="stylesheet" href="shared/css/spielwelt.css">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; min-height: 100%; background: var(--sw-bg); color: var(--sw-anthrazit);
+    font-family: "Open Sans", "Segoe UI", Arial, sans-serif; touch-action: manipulation;
+    -webkit-text-size-adjust: 100%; overscroll-behavior: none; }
+  .top { background: var(--sw-red); color: #fff; padding: max(14px, env(safe-area-inset-top)) 16px 0;
+    border-radius: 0 0 28px 28px; position: relative; overflow: hidden; }
+  .top-inner { max-width: 520px; margin: 0 auto; display: flex; align-items: flex-end; gap: 6px; min-height: 190px; }
+  .hello { flex: 1; padding-bottom: 22px; }
+  .logo-pill { display: inline-block; background: #fff; border-radius: 14px; padding: 7px 12px; margin-bottom: 12px; }
+  .logo-pill img { height: 30px; display: block; }
+  .hello h1 { font-size: 1.75rem; line-height: 1.1; margin: 0 0 6px; font-weight: 700; }
+  .hello p { margin: 0; font-size: 1rem; opacity: .95; line-height: 1.35; }
+  .teddy { width: 42%; max-width: 200px; margin: 0; position: relative; align-self: flex-end; }
+  .teddy img { width: 100%; display: block; }
+  .teddy figcaption { position: absolute; right: 0; bottom: 4px; font-size: .62rem; background: rgba(0,0,0,.35);
+    color: #fff; padding: 1px 6px; border-radius: 8px; }
+  main { max-width: 520px; margin: 0 auto; padding: 18px 16px 8px; }
+  .label { font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--sw-grey); margin: 4px 4px 10px; }
+  .game { display: block; text-decoration: none; color: inherit; background: var(--sw-paper); border-radius: 22px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.08); margin-bottom: 14px; overflow: hidden; transition: transform .08s; }
+  .game:active { transform: scale(.98); }
+  .game-head { display: flex; align-items: center; gap: 14px; padding: 16px 16px 10px; }
+  .game-icon { width: 64px; height: 64px; border-radius: 18px; flex: none; display: grid; place-items: center; position: relative; }
+  .game-icon img { width: 44px; height: 44px; }
+  .game-icon img + img { position: absolute; width: 30px; height: 30px; right: -4px; bottom: -4px; }
+  .g1 .game-icon { background: #fde8ea; }
+  .g2 .game-icon { background: #e6f3e1; }
+  .game h2 { margin: 0; font-size: 1.2rem; line-height: 1.2; }
+  .game .new { display: inline-block; font-size: .68rem; font-weight: 700; background: var(--sw-red); color: #fff;
+    border-radius: 8px; padding: 2px 7px; vertical-align: 3px; margin-left: 4px; }
+  .game p { margin: 3px 0 0; color: var(--sw-grey); font-size: .9rem; line-height: 1.35; }
+  .game-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 16px 14px;
+    border-top: 1px solid var(--sw-line); }
+  .best { font-size: .8rem; color: var(--sw-grey); }
+  .play { background: var(--sw-red); color: #fff; font-weight: 700; border-radius: 14px; padding: 11px 20px; font-size: 1rem; }
+  .total { text-align: center; margin: 8px 0 4px; font-size: .9rem; color: var(--sw-grey); }
+  .total b { color: var(--sw-anthrazit); }
+  footer { text-align: center; font-size: .78rem; color: var(--sw-grey); padding: 10px 16px max(20px, env(safe-area-inset-bottom)); }
+  footer a { color: var(--sw-grey); }
+</style>
 </head>
 <body>
-<div id="game"></div>
-
-<!-- HUD im Spiel -->
-<div id="hud" class="hidden">
-  <div id="timer">00:00.0</div>
-  <button id="btn-pause" class="hud-btn" aria-label="Runde abbrechen">✕</button>
-  <button id="btn-mute" class="hud-btn" aria-label="Ton an/aus">🔊</button>
-  <div id="list-panel"></div>
-  <div id="banner" class="hidden"></div>
-  <div id="prompt" class="hidden"></div>
-</div>
-
-<!-- Touch-Steuerung -->
-<div id="touch" class="hidden">
-  <div id="stick"><div id="stick-knob"></div></div>
-  <button id="btn-throw"><img id="throw-icon" alt=""><span>Einwerfen</span></button>
-</div>
-
-<!-- Bildschirme -->
-<div id="screen-loading" class="screen center">
-  <div class="card small"><img src="img/logo.png" class="logo" alt="REWE Richter"><p id="loading-text">Markt wird aufgebaut …</p></div>
-</div>
-
-<div id="screen-menu" class="screen hidden">
-  <div class="menu-wrap">
-    <div class="card menu-card">
-      <img src="img/logo.png" class="logo" alt="REWE Richter">
-      <div class="red-rule"></div>
-      <h1>Teddy Richter</h1>
-      <h2>kauft ein</h2>
-      <p class="sub">Schnapp dir alles vom Zettel – und ab zur Kasse!</p>
-      <button class="btn red" data-go="setup">Spielen</button>
-      <button class="btn white" data-go="scores">Bestenliste der Woche</button>
-      <p class="hint desktop-only">WASD / Pfeiltasten fahren · Leertaste einwerfen · M Ton · Esc Runde abbrechen</p>
-      <p class="hint touch-only">Links lenken · rechts einwerfen</p>
-      <p class="legal"><span id="impressum-wrap"><a id="link-impressum" target="_blank" rel="noopener">Impressum</a> · </span><a href="datenschutz.html" target="_blank">Datenschutz</a></p>
+<header class="top">
+  <div class="top-inner">
+    <div class="hello">
+      <div class="logo-pill"><img src="shared/img/logo.png" alt="REWE Richter"></div>
+      <h1>Hallo, ich bin Teddy!</h1>
+      <p>Willkommen in der Spielwelt vom REWE Richter. Such dir ein Spiel aus!</p>
     </div>
-    <figure class="teddy-fig menu-teddy">
-      <img src="img/teddy-daumen.png" alt="Teddy Richter zeigt Daumen hoch">
-      <figcaption class="ki">Teddy-Bild: KI-generiert</figcaption>
+    <figure class="teddy">
+      <img src="shared/img/teddy-gamer.png" alt="Teddy Richter mit Headset und Controller winkt">
+      <figcaption>KI-generiert</figcaption>
     </figure>
   </div>
-</div>
+</header>
 
-<div id="screen-setup" class="screen hidden center">
-  <div class="card setup-card">
-    <div class="setup-top">
-      <figure class="teddy-fig setup-teddy">
-        <img src="img/teddy-zeigt.png" alt="Teddy Richter">
-        <figcaption class="ki">Teddy-Bild: KI-generiert</figcaption>
-      </figure>
+<main>
+  <div class="label">Spiele</div>
+
+  <a class="game g1" href="einkauf/">
+    <div class="game-head">
+      <div class="game-icon"><img src="shared/img/icons/bananen.png" alt=""><img src="shared/img/icons/milch.png" alt=""></div>
       <div>
-        <p class="muted">Deine Spielfigur</p>
-        <h1>Teddy Richter</h1>
-        <p>Das Maskottchen vom REWE Richter schnappt sich heute selbst den Wagen.</p>
-        <p>Hilf Teddy, den Einkaufszettel abzuarbeiten – und zwar flott!</p>
+        <h2>Teddy kauft ein</h2>
+        <p>Arbeite den Einkaufszettel im echten Markt ab – und ab zur Kasse!</p>
       </div>
     </div>
-    <p class="muted center-text">Schwierigkeit</p>
-    <div id="diff-buttons" class="row"></div>
-    <div class="row">
-      <button class="btn grey small-btn" data-go="menu">Zurück</button>
-      <button class="btn red" id="btn-go">Los geht's!</button>
+    <div class="game-foot">
+      <div><div class="sw-stars" data-stars="einkauf"></div><div class="best" data-best="einkauf"></div></div>
+      <span class="play">Spielen</span>
     </div>
-    <p id="setup-error" class="error hidden"></p>
-  </div>
-</div>
+  </a>
 
-<div id="screen-list" class="screen hidden center dim">
-  <div class="list-layout">
-    <div id="list-big"></div>
-    <div class="list-info">
-      <h1>Dein Einkaufszettel</h1>
-      <p>Sammle alle Artikel ein und fahre dann so schnell wie möglich durch eine Kasse.</p>
-      <p>Jeder fehlende, falsche oder doppelte Artikel kostet 10 Strafsekunden.</p>
-      <p>Achte auf Durchsagen – Angebote bringen 5 Sekunden Bonus!</p>
-      <button class="btn red" id="btn-start">Start!</button>
-    </div>
-  </div>
-</div>
-
-<div id="screen-countdown" class="screen hidden center nopointer"><div id="count"></div></div>
-
-<div id="screen-pause" class="screen hidden center dim">
-  <div class="card small">
-    <h1>Runde abbrechen?</h1>
-    <p class="muted">Die Uhr läuft weiter.</p>
-    <button class="btn red" id="btn-resume">Weiterspielen</button>
-    <button class="btn grey" id="btn-quit">Abbrechen, zum Hauptmenü</button>
-  </div>
-</div>
-
-<div id="screen-receipt" class="screen hidden dim">
-  <div class="receipt-layout">
-    <div id="receipt"></div>
-    <div class="receipt-side">
-      <h1>Geschafft!</h1>
-      <p id="final-time" class="final"></p>
-      <p id="check-state" class="muted-light"></p>
-      <div id="name-box" class="hidden">
-        <label for="name-input">Dein Name für die Bestenliste:</label>
-        <input id="name-input" maxlength="14" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Spitzname">
-        <p id="name-error" class="error hidden"></p>
-        <button class="btn red" id="btn-save">Eintragen</button>
+  <a class="game g2" href="frische-chef/">
+    <div class="game-head">
+      <div class="game-icon"><img src="shared/img/icons/tomaten.png" alt=""><img src="shared/img/icons/salate.png" alt=""></div>
+      <div>
+        <h2>Frische-Chef <span class="new">NEU</span></h2>
+        <p>Obst &amp; Gemüse: Ware holen, sortieren, richtig einräumen – bevor die Fächer leer sind!</p>
       </div>
-      <button class="btn grey" id="btn-skip">Ohne Eintrag weiter</button>
-      <figure class="teddy-fig receipt-teddy">
-        <img src="img/teddy-daumen.png" alt="">
-        <figcaption class="ki">Teddy-Bild: KI-generiert</figcaption>
-      </figure>
     </div>
-  </div>
-</div>
-
-<div id="screen-scores" class="screen hidden center dim">
-  <div class="card scores-card">
-    <div class="scores-head">Bestenliste der Woche</div>
-    <div id="score-tabs" class="row"></div>
-    <div id="score-table"></div>
-    <p id="week-info" class="muted center-text"></p>
-    <div class="row">
-      <button class="btn grey" data-go="menu">Hauptmenü</button>
-      <button class="btn red" id="btn-again">Nochmal spielen</button>
+    <div class="game-foot">
+      <div><div class="sw-stars" data-stars="frische-chef"></div><div class="best" data-best="frische-chef"></div></div>
+      <span class="play">Spielen</span>
     </div>
-  </div>
-</div>
+  </a>
 
-<script type="module" src="js/main.js"></script>
+  <p class="total" id="total"></p>
+</main>
+
+<footer>
+  <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a><br>
+  Teddy-Bilder: KI-generiert
+</footer>
+
+<script type="module">
+import * as fortschritt from './shared/js/fortschritt.js';
+const STAR = '<svg class="sw-star{on}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>';
+const fmt = s => s >= 60 ? `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, '0')}` : `${s.toFixed(1)} s`;
+let total = 0;
+for (const id of ['einkauf', 'frische-chef']) {
+  const s = fortschritt.spiel(id);
+  total += s.sterne || 0;
+  const box = document.querySelector(`[data-stars="${id}"]`);
+  box.innerHTML = [1, 2, 3].map(i => STAR.replace('{on}', i <= (s.sterne || 0) ? ' on' : '')).join('');
+  box.setAttribute('aria-label', `${s.sterne || 0} von 3 Sternen`);
+  const best = document.querySelector(`[data-best="${id}"]`);
+  if (id === 'einkauf' && s.best && typeof s.best === 'object') {
+    const order = ['schwer', 'mittel', 'leicht'].filter(k => s.best[k] != null);
+    if (order.length) best.textContent = `Bestzeit ${order[0][0].toUpperCase() + order[0].slice(1)}: ${fmt(s.best[order[0]])}`;
+  } else if (typeof s.best === 'number') {
+    best.textContent = `Rekord: ${s.best.toLocaleString('de-DE')} Punkte`;
+  }
+  if (!best.textContent) best.textContent = 'Noch nicht gespielt';
+}
+document.getElementById('total').innerHTML = `Gesammelte Sterne: <b>${total} von 6</b>`;
+</script>
 </body>
 </html>

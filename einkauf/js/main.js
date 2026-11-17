@@ -3,10 +3,11 @@
 import * as THREE from 'three';
 import { Market, softShadowTexture, sparkTexture, tex } from './scene.js';
 import { Player, Customer, PalletWorker, boxContains, boxNearest } from './actors.js';
-import { Sounds } from './sound.js';
+import { Sounds } from '../../shared/js/sound.js';
 import { checkName } from './names.js';
 import * as api from './api.js';
 import { IMPRESSUM_URL } from './config.js';
+import * as fortschritt from '../../shared/js/fortschritt.js';
 
 const $ = id => document.getElementById(id);
 const CAM_DIST = 26;
@@ -66,7 +67,7 @@ const G = {
 };
 let LAY, DEPT, SCENE, market, actorsRoot, player = null, customers = [], worker = null, rng = mulberry(Date.now());
 let shadowTex, sparkTex;
-const iconTex = key => tex(`img/icons/${key}.png`);
+const iconTex = key => tex(`../shared/img/icons/${key}.png`);
 
 function placeCamera(x, z, smooth = 1) {
   G.camT[0] += (x - G.camT[0]) * smooth;
@@ -104,12 +105,12 @@ function newMarketActors() {
 function listHtml(big) {
   const rows = G.items.map(k => {
     const c = G.counts[k] || 0;
-    return `<li class="${c ? 'done' : ''}"><span class="box"></span><img src="img/icons/${k}.png" alt="">`
+    return `<li class="${c ? 'done' : ''}"><span class="box"></span><img src="../shared/img/icons/${k}.png" alt="">`
       + `<span class="name">${esc(DEPT[k].name)}</span>${c > 1 ? `<span class="count">${c}×</span>` : ''}</li>`;
   }).join('');
   const wrong = G.wrong.length
     ? `<li class="wrong-head">Nicht auf dem Zettel:</li>` + G.wrong.map(k =>
-      `<li class="wrong"><span>✗</span><img src="img/icons/${k}.png" alt=""><span>${esc(DEPT[k].name)}</span></li>`).join('')
+      `<li class="wrong"><span>✗</span><img src="../shared/img/icons/${k}.png" alt=""><span>${esc(DEPT[k].name)}</span></li>`).join('')
     : '';
   const done = G.items.filter(k => G.counts[k]).length;
   return `<div class="paper${big ? ' big' : ''}"><div class="head">EINKAUFSZETTEL</div><ul>${rows}${wrong}</ul>`
@@ -416,7 +417,7 @@ function updatePlay(dt) {
     prompt(best ? (isTouch ? `${name} einwerfen` : `LEERTASTE: ${name} einwerfen`) : '');
     const btn = $('btn-throw'), icon = $('throw-icon');
     btn.classList.toggle('ready', Boolean(best));
-    if (best) icon.src = `img/icons/${best.dept}.png`; else icon.removeAttribute('src');
+    if (best) icon.src = `../shared/img/icons/${best.dept}.png`; else icon.removeAttribute('src');
   }
   market.showHighlight(bestZone, G.time);
   placeCamera(p.x, p.z + 1.0, 1 - Math.exp(-6 * dt));
@@ -461,7 +462,7 @@ function receiptHtml(r) {
   const P = LAY.penalty;
   const line = (sym, cls, text, amt) =>
     `<div class="line ${cls}"><span class="sym">${sym}</span><span>${esc(text)}</span><span class="amt">${amt}</span></div>`;
-  let h = `<img src="img/logo.png" class="logo" alt="REWE Richter">`
+  let h = `<img src="../shared/img/logo.png" class="logo" alt="REWE Richter">`
     + `<div class="title">TEDDY RICHTER KAUFT EIN · ${esc(LAY.difficulties[G.diff].label.toUpperCase())}</div><hr>`;
   for (const k of G.items) {
     h += G.counts[k] ? line('✓', 'good', DEPT[k].name, '') : line('✗', 'bad', `${DEPT[k].name} (fehlt)`, `+${P} s`);
@@ -488,6 +489,9 @@ async function finish() {
   setTimeout(() => snd.play('kaching'), 600);
   const r = evaluate();
   G.result = r;
+  // Spielwelt: fehlerfrei geschafft = 1 / 2 / 3 Sterne je nach Stufe (Leicht / Mittel / Schwer)
+  fortschritt.melden('einkauf', { sterne: r.penalty === 0 ? G.diff + 1 : 0,
+    stufe: LAY.difficulties[G.diff].key, zeit: Math.round(r.final * 10) / 10 });
   $('receipt').innerHTML = receiptHtml(r);
   $('final-time').textContent = `Endzeit: ${fmtTime(r.final)}`;
   $('name-error').classList.add('hidden');
