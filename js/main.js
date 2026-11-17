@@ -215,7 +215,7 @@ window.addEventListener('keydown', e => {
   keys.add(k);
   if (k === ' ' || k.startsWith('arrow')) e.preventDefault();
   if (k === 'm') toggleMute();
-  if (k === 'escape') { if (G.state === 'play' || G.state === 'pause') togglePause(); else if (G.state === 'setup') showMenu(); }
+  if (k === 'escape') { if (G.state === 'play') toggleQuit(); else if (G.state === 'setup') showMenu(); }
   if (k === 'enter') {
     if (G.state === 'menu') showSetup();
     else if (G.state === 'setup') $('btn-go').click();
@@ -226,7 +226,6 @@ window.addEventListener('keydown', e => {
 });
 window.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 window.addEventListener('blur', () => keys.clear());
-document.addEventListener('visibilitychange', () => { if (document.hidden && G.state === 'play') togglePause(); });
 document.addEventListener('pointerdown', () => snd.unlock(), { capture: true });
 
 // Joystick am Handy
@@ -255,11 +254,14 @@ function toggleMute() {
 }
 $('btn-mute').textContent = snd.muted ? '🔇' : '🔊';
 $('btn-mute').onclick = toggleMute;
-$('btn-pause').onclick = () => togglePause();
+$('btn-pause').onclick = () => toggleQuit();
 
-function togglePause() {
-  if (G.state === 'play') { G.state = 'pause'; keys.clear(); show('screen-pause'); }
-  else if (G.state === 'pause') { G.state = 'play'; show(null); }
+// Keine Pause (Wunsch des Inhabers): Sonst könnte man sich in Ruhe die Strecke ansehen.
+// Der Knopf fragt nur, ob die Runde abgebrochen werden soll – die Uhr läuft dabei weiter.
+function toggleQuit() {
+  if (G.state !== 'play') return;
+  const open = !document.getElementById('screen-pause').classList.contains('hidden');
+  show(open ? null : 'screen-pause');
 }
 
 // ---------- Einwerfen ----------
@@ -594,7 +596,7 @@ for (const b of document.querySelectorAll('[data-go]')) {
 }
 $('btn-go').onclick = () => { snd.play('click'); showList(); };
 $('btn-start').onclick = () => startCountdown();
-$('btn-resume').onclick = () => togglePause();
+$('btn-resume').onclick = () => toggleQuit();
 $('btn-quit').onclick = () => { clearFx(); showMenu(); };
 $('btn-again').onclick = playAgain;
 

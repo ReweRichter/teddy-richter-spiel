@@ -21,7 +21,7 @@
 <!-- HUD im Spiel -->
 <div id="hud" class="hidden">
   <div id="timer">00:00.0</div>
-  <button id="btn-pause" class="hud-btn" aria-label="Pause">II</button>
+  <button id="btn-pause" class="hud-btn" aria-label="Runde abbrechen">✕</button>
   <button id="btn-mute" class="hud-btn" aria-label="Ton an/aus">🔊</button>
   <div id="list-panel"></div>
   <div id="banner" class="hidden"></div>
@@ -49,7 +49,7 @@
       <p class="sub">Schnapp dir alles vom Zettel – und ab zur Kasse!</p>
       <button class="btn red" data-go="setup">Spielen</button>
       <button class="btn white" data-go="scores">Bestenliste der Woche</button>
-      <p class="hint desktop-only">WASD / Pfeiltasten fahren · Leertaste einwerfen · M Ton · Esc Pause</p>
+      <p class="hint desktop-only">WASD / Pfeiltasten fahren · Leertaste einwerfen · M Ton · Esc Runde abbrechen</p>
       <p class="hint touch-only">Links lenken · rechts einwerfen</p>
       <p class="legal"><span id="impressum-wrap"><a id="link-impressum" target="_blank" rel="noopener">Impressum</a> · </span><a href="datenschutz.html" target="_blank">Datenschutz</a></p>
     </div>
@@ -101,9 +101,10 @@
 
 <div id="screen-pause" class="screen hidden center dim">
   <div class="card small">
-    <h1>Pause</h1>
-    <button class="btn red" id="btn-resume">Weiter</button>
-    <button class="btn grey" id="btn-quit">Zum Hauptmenü</button>
+    <h1>Runde abbrechen?</h1>
+    <p class="muted">Die Uhr läuft weiter.</p>
+    <button class="btn red" id="btn-resume">Weiterspielen</button>
+    <button class="btn grey" id="btn-quit">Abbrechen, zum Hauptmenü</button>
   </div>
 </div>
 
