@@ -186,6 +186,7 @@ function startCountdown() {
   show('screen-countdown');
   refreshList();
   $('hud').classList.remove('hidden');
+  $('list-panel').classList.remove('hidden');
   $('timer').textContent = '00:00.0';
   $('banner').classList.add('hidden');
   $('prompt').classList.add('hidden');
@@ -262,6 +263,8 @@ function toggleQuit() {
   if (G.state !== 'play') return;
   const open = !document.getElementById('screen-pause').classList.contains('hidden');
   show(open ? null : 'screen-pause');
+  // Solange das Fenster offen ist, bleibt der Einkaufszettel verborgen (die Uhr läuft weiter)
+  $('list-panel').classList.toggle('hidden', !open);
 }
 
 // ---------- Einwerfen ----------
